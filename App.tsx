@@ -69,10 +69,10 @@ function HomeScreen() {
   };
 
   const FEATURED_API =
-    'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=04c35731a5ee918f014970082a0088b1&page=1';
+    'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=08289583f4dda345d359af461ba727bf&page=1';
   const IMG_API = 'https://image.tmdb.org/t/p/w1280';
   const SEARCH_API =
-    'https://api.themoviedb.org/3/search/movie?sort_by=popularity.desc&api_key=04c35731a5ee918f014970082a0088b1&query=';
+    'https://api.themoviedb.org/3/search/movie?sort_by=popularity.desc&api_key=08289583f4dda345d359af461ba727bf&query=';
 
   const [movie, setMovie] = useState([]);
   const [searchText, setSearchText] = useState('');
@@ -83,7 +83,6 @@ function HomeScreen() {
     const fetchData = async () => {
       const response = await fetch(FEATURED_API);
       const data = await response.json();
-      // console.log(data);
       setMovie(data.results);
     };
 
@@ -95,7 +94,6 @@ function HomeScreen() {
     const fetchData = async () => {
       const response = await fetch(FEATURED_API);
       const data = await response.json();
-      // console.log(data);
       setMovie(data.results);
     };
 
@@ -106,13 +104,13 @@ function HomeScreen() {
     const fetchMovie = async () => {
       const response = await fetch(SEARCH_API + searchText);
       const data = await response.json();
-      // console.log(data);
 
       if (data.results == 0) {
         getMovie();
       }
 
       setMovie(data.results);
+      
     };
 
     fetchMovie();
@@ -142,7 +140,9 @@ function HomeScreen() {
             }}
             placeholder="Search for a Movie!"
             onChangeText={searchText => setSearchText(searchText)}
-            onSubmitEditing={() => searchMovies(searchText)}></TextInput>
+            onSubmitEditing={() => searchMovies(searchText)
+            }
+            ></TextInput>
           {movie.map(movie => (
             <View
               key={movie.id}
@@ -174,14 +174,20 @@ function HomeScreen() {
                       {movie.title}
                     </Text>
 
-                    <Text style={{color: 'white', fontSize: 15}}>
+                    <Text style={{color: 'white', fontSize: 15, maxHeight: 110, minWidth: 370}}>
                       {movie.overview}
                     </Text>
 
-                    <Button
-                      title="View Details"
-                      onPress={() => alert('Button Clicked!')}
-                    />
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 15,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      <Ionicons name="star" color="yellow" size={20} />
+                      Average Rating: {movie.vote_average}
+                    </Text>
                   </View>
                 </View>
               </ImageBackground>
@@ -200,58 +206,51 @@ function SeriesScreen() {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  const FEATURED_API = 'https://www.episodate.com/api/most-popular?page=1';
+  const FEATURED_API =
+    'https://api.themoviedb.org/3/discover/tv?sort_by=popularity.desc&api_key=08289583f4dda345d359af461ba727bf&page=1';
   const IMG_API = 'https://image.tmdb.org/t/p/w1280';
   const SEARCH_API =
-    'https://api.themoviedb.org/3/search/movie?sort_by=popularity.desc&api_key=04c35731a5ee918f014970082a0088b1&query=';
+    'https://api.themoviedb.org/3/search/tv?sort_by=popularity.desc&api_key=08289583f4dda345d359af461ba727bf&query=';
 
-  const [seriesName, setSeriesName] = useState([]);
+  const [serie, setSerie] = useState([]);
   const [searchText, setSearchText] = useState('');
 
-  console.log(searchText);
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(FEATURED_API);
+      const data = await response.json();
+      setSerie(data.results);
+    };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const response = await fetch(FEATURED_API);
-  //     const data = await response.json();
-  //     // console.log(data);
-  //     // console.log(data);
-  //     setSeries(data.tv_shows);
-  //   };
+    fetchData();
+    searchSerie(searchText);
+  }, []);
 
-  //   fetchData();
-  //   // searchMovies(searchText);
-  // }, []);
+  function getSerie() {
+    const fetchData = async () => {
+      const response = await fetch(FEATURED_API);
+      const data = await response.json();
+      setSerie(data.results);
+    };
 
-  // function getMovie() {
-  //   const fetchData = async () => {
-  //     const response = await fetch(FEATURED_API);
-  //     const data = await response.json();
-  //     console.log(data)
-  //     setSeries(data.results);
-  //   };
-
-  //   fetchData();
-  // }
-  getSeries();
-  async function getSeries() {
-    
+    fetchData();
   }
-  // function searchMovies(searchText: string) {
-  //   const fetchMovie = async () => {
-  //     const response = await fetch(SEARCH_API + searchText);
-  //     const data = await response.json();
-  //     console.log(data);
 
-  //     if (data.results == 0) {
-  //       getMovie();
-  //     }
+  function searchSerie(searchText: string) {
+    const fetchMovie = async () => {
+      const response = await fetch(SEARCH_API + searchText);
+      const data = await response.json();
+      console.log(data.results);
 
-  //     setSeries(data.results);
-  //   };
+      if (data.results == 0) {
+        getSerie();
+      }
 
-  //   fetchMovie();
-  // }
+      setSerie(data.results);
+    };
+
+    fetchMovie();
+  }
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -275,10 +274,13 @@ function SeriesScreen() {
               borderRadius: 10,
               padding: 10,
             }}
-            placeholder="Search for a Movie!"
+            placeholder="Search for a series!"
             onChangeText={searchText => setSearchText(searchText)}
-            onSubmitEditing={() => searchMovies(searchText)}></TextInput>
+            onSubmitEditing={() => searchSerie(searchText)}
+            ></TextInput>
+          {serie.map(serie => (
             <View
+              key={serie.id}
               style={{
                 flex: 1,
                 justifyContent: 'center',
@@ -286,9 +288,9 @@ function SeriesScreen() {
                 margin: 10,
                 backgroundColor: 'white',
               }}>
-              {/* <ImageBackground
+              <ImageBackground
                 source={{
-                  uri: IMG_API + movie.backdrop_path,
+                  uri: IMG_API + serie.backdrop_path,
                 }}
                 style={{
                   width: '100%',
@@ -296,29 +298,36 @@ function SeriesScreen() {
                   justifyContent: 'center',
                   alignItems: 'center',
                   resizeMode: 'cover',
-                }}> */}
-              <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                <View
-                  style={{
-                    backgroundColor: 'rgba(0,0,0,0.5)',
-                    padding: 10,
-                  }}>
-                  <Text style={{color: 'white', fontSize: 20}}>
-                    {seriesName}
-                  </Text>
+                }}>
+                <View style={{flex: 1, justifyContent: 'flex-end'}}>
+                  <View
+                    style={{
+                      backgroundColor: 'rgba(0,0,0,0.5)',
+                      padding: 10,
+                    }}>
+                    <Text style={{color: 'white', fontSize: 20}}>
+                      {serie.name}
+                    </Text>
 
-                  {/* <Text style={{color: 'white', fontSize: 15, }}>
-                      {series.tv_shows.overview}
-                    </Text> */}
+                    <Text style={{color: 'white', fontSize: 15, maxHeight: 110}}>
+                      {serie.overview}
+                    </Text>
 
-                  <Button
-                    title="View Details"
-                    onPress={() => alert('Button Clicked!')}
-                  />
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: 15,
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      <Ionicons name="star" color="yellow" size={20} />
+                      Average Rating: {serie.vote_average}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-              {/* </ImageBackground> */}
+              </ImageBackground>
             </View>
+          ))}
         </View>
       </ScrollView>
     </SafeAreaView>
